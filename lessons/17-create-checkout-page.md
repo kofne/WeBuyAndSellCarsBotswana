@@ -1,6 +1,8 @@
 # 17-create-checkout-page
 
-## npx shadcn@latest add radio-group
+## Install Packages
+
+npx shadcn@latest add radio-group
 
 ## update lib/constants.ts
 
@@ -132,28 +134,18 @@ return {
 ## update lib/validator.ts
 
 ```ts
-color: z.string().optional(),
-})
-
 export const ShippingAddressSchema = z.object({
-fullName: z.string().min(1, 'Full name is required'),
-street: z.string().min(1, 'Address is required'),
-city: z.string().min(1, 'City is required'),
-postalCode: z.string().min(1, 'Postal code is required'),
-province: z.string().min(1, 'Province is required'),
-phone: z.string().min(1, 'Phone number is required'),
-country: z.string().min(1, 'Country is required'),
+  fullName: z.string().min(1, 'Full name is required'),
+  street: z.string().min(1, 'Address is required'),
+  city: z.string().min(1, 'City is required'),
+  postalCode: z.string().min(1, 'Postal code is required'),
+  province: z.string().min(1, 'Province is required'),
+  phone: z.string().min(1, 'Phone number is required'),
+  country: z.string().min(1, 'Country is required'),
 })
 
 export const CartSchema = z.object({
-items: z
-  .array(OrderItemSchema)
-shippingPrice: z.optional(z.number()),
-totalPrice: z.number(),
-paymentMethod: z.optional(z.string()),
-shippingAddress: z.optional(ShippingAddressSchema),
-deliveryDateIndex: z.optional(z.number()),
-expectedDeliveryDate: z.optional(z.date()),
+  shippingAddress: z.optional(ShippingAddressSchema),
 })
 ```
 
@@ -172,8 +164,41 @@ export type OrderItem = z.infer<typeof OrderItemSchema>
 export type Cart = z.infer<typeof CartSchema>
 export type ShippingAddress = z.infer<typeof ShippingAddressSchema>
 
-// user
-export type IUserInput = z.infer<typeof UserInputSchema>
+```
+
+## create app/checkout/checkout-footer.tsx
+
+```ts
+import { APP_NAME } from '@/lib/constants'
+import Link from 'next/link'
+import React from 'react'
+
+export default function CheckoutFooter() {
+  return (
+    <div className='border-t-2 space-y-2 my-4 py-4'>
+      <p>
+        Need help? Check our <Link href='/page/help'>Help Center</Link> or{' '}
+        <Link href='/page/contact-us'>Contact Us</Link>{' '}
+      </p>
+      <p>
+        For an item ordered from {APP_NAME}: When you click the &apos;Place Your
+        Order&apos; button, we will send you an e-mail acknowledging receipt of
+        your order. Your contract to purchase an item will not be complete until
+        we send you an e-mail notifying you that the item has been shipped to
+        you. By placing your order, you agree to {APP_NAME}
+        &apos;s <Link href='/page/privacy-policy'>privacy notice</Link> and
+        <Link href='/page/conditions-of-use'> conditions of use</Link>.
+      </p>
+      <p>
+        Within 30 days of delivery, you may return new, unopened merchandise in
+        its original condition. Exceptions and restrictions apply.{' '}
+        <Link href='/page/returns-policy'>
+          See {APP_NAME}&apos;s Returns Policy.
+        </Link>
+      </p>
+    </div>
+  )
+}
 ```
 
 ## update hooks/use-cart-store.ts
@@ -296,97 +321,6 @@ const useCartStore = create(
   }),
   {
     name: 'cart-store',
-```
-
-## update lib/actions/order.actions.ts
-
-```ts
--import { OrderItem } from '@/types'
-import { OrderItem, ShippingAddress } from '@/types'
-import { round2 } from '../utils'
--import { FREE_SHIPPING_MIN_PRICE } from '../constants'
-import { AVAILABLE_DELIVERY_DATES } from '../constants'
-
-export const calcDeliveryDateAndPrice = async ({
-items,
-shippingAddress,
-deliveryDateIndex,
-}: {
-deliveryDateIndex?: number
-items: OrderItem[]
-shippingAddress?: ShippingAddress
-}) => {
-const itemsPrice = round2(
-  items.reduce((acc, item) => acc + item.price * item.quantity, 0)
-)
-
--  const shippingPrice = itemsPrice > FREE_SHIPPING_MIN_PRICE ? 0 : 5
--  const taxPrice = round2(itemsPrice * 0.15)
-const deliveryDate =
-  AVAILABLE_DELIVERY_DATES[
-    deliveryDateIndex === undefined
-      ? AVAILABLE_DELIVERY_DATES.length - 1
-      : deliveryDateIndex
-  ]
-const shippingPrice =
-  !shippingAddress || !deliveryDate
-    ? undefined
-    : deliveryDate.freeShippingMinPrice > 0 &&
-      itemsPrice >= deliveryDate.freeShippingMinPrice
-    ? 0
-    : deliveryDate.shippingPrice
-
-const taxPrice = !shippingAddress ? undefined : round2(itemsPrice * 0.15)
-
-const totalPrice = round2(
-  itemsPrice +
-    (shippingPrice ? round2(shippingPrice) : 0) +
-    (taxPrice ? round2(taxPrice) : 0)
-)
-return {
-  AVAILABLE_DELIVERY_DATES,
-  deliveryDateIndex:
-    deliveryDateIndex === undefined
-      ? AVAILABLE_DELIVERY_DATES.length - 1
-      : deliveryDateIndex,
-  itemsPrice,
-  shippingPrice,
-  taxPrice,
-```
-
-## create app/checkout/checkout-footer.tsx
-
-```ts
-import { APP_NAME } from '@/lib/constants'
-import Link from 'next/link'
-import React from 'react'
-
-export default function CheckoutFooter() {
-  return (
-    <div className='border-t-2 space-y-2 my-4 py-4'>
-      <p>
-        Need help? Check our <Link href='/page/help'>Help Center</Link> or{' '}
-        <Link href='/page/contact-us'>Contact Us</Link>{' '}
-      </p>
-      <p>
-        For an item ordered from {APP_NAME}: When you click the &apos;Place Your
-        Order&apos; button, we will send you an e-mail acknowledging receipt of
-        your order. Your contract to purchase an item will not be complete until
-        we send you an e-mail notifying you that the item has been shipped to
-        you. By placing your order, you agree to {APP_NAME}
-        &apos;s <Link href='/page/privacy-policy'>privacy notice</Link> and
-        <Link href='/page/conditions-of-use'> conditions of use</Link>.
-      </p>
-      <p>
-        Within 30 days of delivery, you may return new, unopened merchandise in
-        its original condition. Exceptions and restrictions apply.{' '}
-        <Link href='/page/returns-policy'>
-          See {APP_NAME}&apos;s Returns Policy.
-        </Link>
-      </p>
-    </div>
-  )
-}
 ```
 
 ## create app/checkout/checkout-form.tsx
@@ -1082,22 +1016,6 @@ const CheckoutForm = () => {
 export default CheckoutForm
 ```
 
-## update app/checkout/page.tsx
-
-```ts
-import { Metadata } from 'next'
-import CheckoutForm from './checkout-form'
-import { auth } from '@/auth'
-import { redirect } from 'next/navigation'
-
-if (!session?.user) {
-  redirect('/sign-in?callbackUrl=/checkout')
-}
--  return <div>Checkout Form</div>
-return <CheckoutForm />
-}
-```
-
 ## create app/checkout/layout.tsx
 
 ```ts
@@ -1141,6 +1059,78 @@ export default function CheckoutLayout({
     </div>
   )
 }
+```
+
+## update app/checkout/page.tsx
+
+```ts
+import { Metadata } from 'next'
+import CheckoutForm from './checkout-form'
+import { auth } from '@/auth'
+import { redirect } from 'next/navigation'
+
+if (!session?.user) {
+  redirect('/sign-in?callbackUrl=/checkout')
+}
+-  return <div>Checkout Form</div>
+return <CheckoutForm />
+}
+```
+
+## update lib/actions/order.actions.ts
+
+```ts
+-import { OrderItem } from '@/types'
+import { OrderItem, ShippingAddress } from '@/types'
+import { round2 } from '../utils'
+-import { FREE_SHIPPING_MIN_PRICE } from '../constants'
+import { AVAILABLE_DELIVERY_DATES } from '../constants'
+
+export const calcDeliveryDateAndPrice = async ({
+items,
+shippingAddress,
+deliveryDateIndex,
+}: {
+deliveryDateIndex?: number
+items: OrderItem[]
+shippingAddress?: ShippingAddress
+}) => {
+const itemsPrice = round2(
+  items.reduce((acc, item) => acc + item.price * item.quantity, 0)
+)
+
+-  const shippingPrice = itemsPrice > FREE_SHIPPING_MIN_PRICE ? 0 : 5
+-  const taxPrice = round2(itemsPrice * 0.15)
+const deliveryDate =
+  AVAILABLE_DELIVERY_DATES[
+    deliveryDateIndex === undefined
+      ? AVAILABLE_DELIVERY_DATES.length - 1
+      : deliveryDateIndex
+  ]
+const shippingPrice =
+  !shippingAddress || !deliveryDate
+    ? undefined
+    : deliveryDate.freeShippingMinPrice > 0 &&
+      itemsPrice >= deliveryDate.freeShippingMinPrice
+    ? 0
+    : deliveryDate.shippingPrice
+
+const taxPrice = !shippingAddress ? undefined : round2(itemsPrice * 0.15)
+
+const totalPrice = round2(
+  itemsPrice +
+    (shippingPrice ? round2(shippingPrice) : 0) +
+    (taxPrice ? round2(taxPrice) : 0)
+)
+return {
+  AVAILABLE_DELIVERY_DATES,
+  deliveryDateIndex:
+    deliveryDateIndex === undefined
+      ? AVAILABLE_DELIVERY_DATES.length - 1
+      : deliveryDateIndex,
+  itemsPrice,
+  shippingPrice,
+  taxPrice,
 ```
 
 ## npm run build

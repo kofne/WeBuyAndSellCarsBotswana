@@ -1,81 +1,73 @@
 # 16-signin-with-google
 
-1. open https://console.cloud.google.com/apis/credentials
-2. create a new OAuth 2.0 Client ID ans get its credentials
-3. .env.local
+## update .env.local
 
-   ```txt
-        AUTH_GOOGLE_ID=xx.apps.googleusercontent.com
-        AUTH_GOOGLE_SECRET=xx
-   ```
+- open https://console.cloud.google.com/apis/credentials
+- create a new OAuth 2.0 Client ID ans get its credentials
 
-4. lib/actions/user.actions.ts
+```txt
+     AUTH_GOOGLE_ID=xx.apps.googleusercontent.com
+     AUTH_GOOGLE_SECRET=xx
+```
 
-   ```ts
-   export const SignInWithGoogle = async () => {
-     await signIn('google')
-   }
-   ```
+## update auth.ts
 
-5. auth.ts
+```ts
+import Google from 'next-auth/providers/google'
+    Google({
+      allowDangerousEmailAccountLinking: true,
+    }),
+```
 
-   ```ts
-   import Google from 'next-auth/providers/google'
-   ...
-   providers: [
-     Google({
-       allowDangerousEmailAccountLinking: true,
-     }),
-   ]
-   ```
+## update lib/actions/user.actions.ts
 
-6. app/(auth)/sign-in/google-signin-form.tsx
+```ts
+-
+export const SignInWithGoogle = async () => {
+  await signIn('google')
+}
+```
 
-   ```tsx
-   'use client'
-   import { useFormStatus } from 'react-dom'
+## create app/(auth)/sign-in/google-signin-form.tsx
 
-   import { Button } from '@/components/ui/button'
-   import { SignInWithGoogle } from '@/lib/actions/user.actions'
+```ts
+'use client'
+import { useFormStatus } from 'react-dom'
 
-   export function GoogleSignInForm() {
-     const SignInButton = () => {
-       const { pending } = useFormStatus()
-       return (
-         <Button disabled={pending} className='w-full' variant='outline'>
-           {pending ? 'Redirecting to Google...' : 'Sign In with Google'}
-         </Button>
-       )
-     }
-     return (
-       <form action={SignInWithGoogle}>
-         <SignInButton />
-       </form>
-     )
-   }
-   ```
+import { Button } from '@/components/ui/button'
+import { SignInWithGoogle } from '@/lib/actions/user.actions'
 
-7. app/(auth)/sign-in/page.tsx
+export function GoogleSignInForm() {
+  const SignInButton = () => {
+    const { pending } = useFormStatus()
+    return (
+      <Button disabled={pending} className='w-full' variant='outline'>
+        {pending ? 'Redirecting to Google...' : 'Sign In with Google'}
+      </Button>
+    )
+  }
+  return (
+    <form action={SignInWithGoogle}>
+      <SignInButton />
+    </form>
+  )
+}
+```
 
-   ```tsx
-   import { GoogleSignInForm } from './google-signin-form'
-   ...
-   <div>
-     <CredentialsSignInForm />
-     <SeparatorWithOr />
-     <div className='mt-4'>
-       <GoogleSignInForm />
-     </div>
-   </div>
-   ```
+## update app/(auth)/sign-in/page.tsx
 
-8. app/api/auth/[...nextauth]/route.ts
+```ts
+import { GoogleSignInForm } from './google-signin-form'
+            <SeparatorWithOr />
+            <div className='mt-4'>
+              <GoogleSignInForm />
+            </div>
+```
 
-   ```ts
-   import { handlers } from '@/auth'
+## npm run build
 
-   export const { GET, POST } = handlers
-   ```
+## update env variables on vercel
 
-9. commit changes and push to GitHub
-10. go to https://nextjs-amazona.vercel.app
+## commit changes and push to GitHub
+
+## go to https://nextjs-amazona.vercel.app
