@@ -366,13 +366,6 @@ export async function approvePayPalOrder(
     return { success: false, message: formatError(err) }
   }
 }
-
--        itemsPrice >= deliveryDate.freeShippingMinPrice
--      ? 0
--      : deliveryDate.shippingPrice
-          itemsPrice >= deliveryDate.freeShippingMinPrice
-        ? 0
-        : deliveryDate.shippingPrice
 ```
 
 ## create app/checkout/[id]/payment-form.tsx
@@ -399,7 +392,7 @@ import { redirect, useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import ProductPrice from '@/components/shared/product/product-price'
 
-export default function OrderDetailsForm({
+export default function OrderPaymentForm({
   order,
   paypalClientId,
 }: {
