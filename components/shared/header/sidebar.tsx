@@ -1,20 +1,3 @@
-# 24-create-category-sidebar
-
-## Install Packages
-
-npx shadcn@latest add drawer
-
-## update app/globals.css
-
-```ts
-  .item-button {
-    @apply p-3 hover:bg-muted hover:no-underline;
-  }
-```
-
-## create components/shared/header/sidebar.tsx
-
-```ts
 import * as React from 'react'
 import Link from 'next/link'
 import { X, ChevronRight, UserCircle, MenuIcon } from 'lucide-react'
@@ -134,32 +117,3 @@ export default async function Sidebar({
     </Drawer>
   )
 }
-```
-
-## update components/shared/header/index.tsx
-
-```ts
--import { Button } from '@/components/ui/button'
--import { MenuIcon } from 'lucide-react'
-import Sidebar from './sidebar'
-import { getAllCategories } from '@/lib/actions/product.actions'
--export default function Header() {
-export default async function Header() {
-  const categories = await getAllCategories()
--        <Button
--          variant='ghost'
--          className='dark header-button flex items-center gap-1 text-base [&_svg]:size-6'
--        >
--          <MenuIcon />
--          All
--        </Button>
-        <Sidebar categories={categories} />
-```
-
-## npm run build
-
-## update env variables on vercel
-
-## commit changes and push to GitHub
-
-## go to https://nextjs-amazona.vercel.app
