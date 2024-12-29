@@ -42,9 +42,9 @@ https://next-mongo-ecommerce-final.vercel.app/
     $ cd nextjs-amazona
    ```
 
-2. Create .env.local File
+2. Create Env File
 
-   - duplicate env.example and rename it to .env.local
+   - duplicate .example-env and rename it to .env.local
 
 3. Setup MongoDB
 
