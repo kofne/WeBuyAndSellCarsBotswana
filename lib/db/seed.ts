@@ -24,21 +24,37 @@ const main = async () => {
     const { users, products, reviews, webPages, settings } = data
     await connectToDatabase(process.env.MONGODB_URI)
 
+    // Delete existing data
     await User.deleteMany()
-    const createdUser = await User.insertMany(users)
-
     await Setting.deleteMany()
-    const createdSetting = await Setting.insertMany(settings)
-
     await WebPage.deleteMany()
+    await Product.deleteMany()
+    await Review.deleteMany()
+    await Order.deleteMany()
+
+    // Create users, settings, webPages
+    const createdUser = await User.insertMany(users)
+    const createdSetting = await Setting.insertMany(settings)
     await WebPage.insertMany(webPages)
 
-    await Product.deleteMany()
-    const createdProducts = await Product.insertMany(
-      products.map((x) => ({ ...x, _id: undefined }))
-    )
+    // Ensure unique slugs for products
+    const slugMap = new Map<string, number>()
+    const uniqueProducts = products.map((p) => {
+      let slug = p.slug
+      if (slugMap.has(slug)) {
+        const count = slugMap.get(slug)! + 1
+        slugMap.set(slug, count)
+        slug = `${slug}-${count}` // append number to make slug unique
+      } else {
+        slugMap.set(slug, 0)
+      }
+      return { ...p, _id: undefined, slug }
+    })
 
-    await Review.deleteMany()
+    // Insert products
+    const createdProducts = await Product.insertMany(uniqueProducts)
+
+    // Create reviews
     const rws = []
     for (let i = 0; i < createdProducts.length; i++) {
       let x = 0
@@ -46,10 +62,9 @@ const main = async () => {
       for (let j = 0; j < ratingDistribution.length; j++) {
         for (let k = 0; k < ratingDistribution[j].count; k++) {
           x++
+          const filteredReviews = reviews.filter((x) => x.rating === j + 1)
           rws.push({
-            ...reviews.filter((x) => x.rating === j + 1)[
-              x % reviews.filter((x) => x.rating === j + 1).length
-            ],
+            ...filteredReviews[x % filteredReviews.length],
             isVerifiedPurchase: true,
             product: createdProducts[i]._id,
             user: createdUser[x % createdUser.length]._id,
@@ -61,7 +76,7 @@ const main = async () => {
     }
     const createdReviews = await Review.insertMany(rws)
 
-    await Order.deleteMany()
+    // Generate orders
     const orders = []
     for (let i = 0; i < 200; i++) {
       orders.push(
@@ -73,6 +88,7 @@ const main = async () => {
       )
     }
     const createdOrders = await Order.insertMany(orders)
+
     console.log({
       createdUser,
       createdProducts,
@@ -94,7 +110,6 @@ const generateOrder = async (
   products: any
 ): Promise<IOrderInput> => {
   const product1 = await Product.findById(products[i % products.length])
-
   const product2 = await Product.findById(
     products[
       i % products.length >= products.length - 1
@@ -131,9 +146,9 @@ const generateOrder = async (
       slug: product2.slug,
       quantity: 2,
       image: product2.images[0],
-      category: product1.category,
+      category: product2.category,
       price: product2.price,
-      countInStock: product1.countInStock,
+      countInStock: product2.countInStock,
     },
     {
       clientId: generateId(),
@@ -142,9 +157,9 @@ const generateOrder = async (
       slug: product3.slug,
       quantity: 3,
       image: product3.images[0],
-      category: product1.category,
+      category: product3.category,
       price: product3.price,
-      countInStock: product1.countInStock,
+      countInStock: product3.countInStock,
     },
   ]
 
@@ -163,7 +178,7 @@ const generateOrder = async (
     createdAt: calculatePastDate(i),
     expectedDeliveryDate: calculateFutureDate(i % 2),
     ...calcDeliveryDateAndPriceForSeed({
-      items: items,
+      items,
       shippingAddress: data.users[i % users.length].address,
       deliveryDateIndex: i % 2,
     }),

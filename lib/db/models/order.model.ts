@@ -1,19 +1,26 @@
 import { IOrderInput } from '@/types'
-import { Document, Model, model, models, Schema } from 'mongoose'
+import { Document, Model, model, models, Schema, Types } from 'mongoose'
 
+// ---------------------
+// FIXED INTERFACE
+// ---------------------
 export interface IOrder extends Document, IOrderInput {
-  _id: string
+  _id: Types.ObjectId   // FIXED: must use ObjectId, not string
   createdAt: Date
   updatedAt: Date
 }
 
+// ---------------------
+// ORDER SCHEMA
+// ---------------------
 const orderSchema = new Schema<IOrder>(
   {
     user: {
-      type: Schema.Types.ObjectId as unknown as typeof String,
+      type: Schema.Types.ObjectId,
       ref: 'User',
       required: true,
     },
+
     items: [
       {
         product: {
@@ -33,6 +40,7 @@ const orderSchema = new Schema<IOrder>(
         color: { type: String },
       },
     ],
+
     shippingAddress: {
       fullName: { type: String, required: true },
       street: { type: String, required: true },
@@ -42,17 +50,27 @@ const orderSchema = new Schema<IOrder>(
       province: { type: String, required: true },
       phone: { type: String, required: true },
     },
+
     expectedDeliveryDate: { type: Date, required: true },
     paymentMethod: { type: String, required: true },
-    paymentResult: { id: String, status: String, email_address: String },
+
+    paymentResult: {
+      id: { type: String },
+      status: { type: String },
+      email_address: { type: String },
+    },
+
     itemsPrice: { type: Number, required: true },
     shippingPrice: { type: Number, required: true },
     taxPrice: { type: Number, required: true },
     totalPrice: { type: Number, required: true },
+
     isPaid: { type: Boolean, required: true, default: false },
     paidAt: { type: Date },
+
     isDelivered: { type: Boolean, required: true, default: false },
     deliveredAt: { type: Date },
+
     createdAt: { type: Date, default: Date.now },
   },
   {
@@ -60,6 +78,9 @@ const orderSchema = new Schema<IOrder>(
   }
 )
 
+// ---------------------
+// MODEL EXPORT
+// ---------------------
 const Order =
   (models.Order as Model<IOrder>) || model<IOrder>('Order', orderSchema)
 

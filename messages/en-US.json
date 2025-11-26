@@ -33,6 +33,7 @@
     "Subtotal": "Subtotal",
     "Go to cart": "Go to cart"
   },
+
   "Home": {
     "Categories to explore": "Categories to explore",
     "See More": "See More",
@@ -45,10 +46,12 @@
     "Best Selling Products": "Best Selling Products",
     "Related to items that you've viewed": "Related to items that you've viewed",
     "Your browsing history": "Your browsing history",
-    "Most Popular Shoes For Sale": "Most Popular Shoes For Sale",
-    "Best Sellers in T-Shirts": "Best Sellers in T-Shirts",
-    "Best Deals on Wrist Watches": "Best Deals on Wrist Watches"
+
+    "Most Popular Cars For Sale": "Most Popular Cars For Sale",
+    "Best Sellers in Mercedes Benz": "Best Sellers in Mercedes Benz",
+    "Best Deals on BMW": "Best Deals on BMW"
   },
+
   "Product": {
     "Added to Cart": "Added to Cart",
     "Go to Cart": "Go to Cart",
@@ -101,6 +104,7 @@
     "No reviews yet": "No reviews yet",
     "Submitting": "Submitting..."
   },
+
   "Cart": {
     "Shopping Cart": "Shopping Cart",
     "Price": "Price",
@@ -125,6 +129,7 @@
     "Update": "Update",
     "Checkout": "Checkout"
   },
+
   "Search": {
     "for": "for",
     "Search": "Search",
@@ -152,6 +157,7 @@
     "Previous": "Previous",
     "Page": "Page"
   },
+
   "Footer": {
     "Select a currency": "Select a currency",
     "Select a language": "Select a language",
@@ -159,9 +165,9 @@
     "Get to Know Us": "Get to Know Us",
     "Careers": "Careers",
     "Blog": "Blog",
-    "About name": "About {name}",
+    "About name": "About We Sell & Buy Cars Botswana",
     "Make Money with Us": "Make Money with Us",
-    "Sell products on": "Sell products on {name}",
+    "Sell products on": "Sell products on We Sell & Buy Cars Botswana",
     "Become an Affiliate": "Become an Affiliate",
     "Advertise Your Products": "Advertise Your Products",
     "Let Us Help You": "Let Us Help You",
@@ -171,14 +177,17 @@
     "Privacy Notice": "Privacy Notice",
     "Help": "Help"
   },
+
   "Loading": {
     "Loading": "Loading..."
   },
+
   "Error": {
     "Error": "Error",
     "Try again": "Try again",
     "Back To Home": "Back To Home"
   },
+
   "Admin": {
     "Deleted User": "Deleted User",
     "Overview": "Overview",

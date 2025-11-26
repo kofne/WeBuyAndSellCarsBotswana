@@ -1,5 +1,5 @@
 {
-  "name": "nextjs-amazona",
+  "name": "WeBuy&SellCarsBotswana",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -40,7 +40,7 @@
     "embla-carousel-react": "^8.5.1",
     "lucide-react": "^0.468.0",
     "mongodb": "^6.12.0",
-    "mongoose": "^8.9.0",
+    "mongoose": "^8.20.0",
     "next": "15.1.0",
     "next-auth": "^5.0.0-beta.25",
     "next-intl": "^3.26.3",
